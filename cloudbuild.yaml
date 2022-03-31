@@ -1,0 +1,48 @@
+# This file automates the deployment infrastructure in terraform workspace according to
+# branch of the  GitHub. 
+
+# To avoid creating many workspaces and deployments, 
+# Create The CloudBuild Trigger with condition to listen to the Branch Name ending with -env
+# EG: dev-env, test-env, or prod-env
+
+steps:
+
+# Start
+- id: 'branch name'
+  name: 'alpine'
+  entrypoint: 'sh'  
+  args: 
+  - '-c'
+  - | 
+    echo "***********************"
+    echo "The Commit was made in the branch: "
+    echo "$BRANCH_NAME"
+    echo "***********************"
+
+# Terraform initialize
+- id: 'Initialize in respective workspace and Plan'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+    cd profiles/
+    echo "The dir is changed"
+    terraform workspace select $BRANCH_NAME || terraform workspace new $BRANCH_NAME
+    terraform init 
+    terraform plan -var="project_id=${_PROJECT_ID}"
+
+# Terraform Apply
+- id: 'Deploying the Resources'
+  name: 'hashicorp/terraform:1.0.0'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+    cd profiles/
+    terraform workspace select $BRANCH_NAME || terraform workspace new $BRANCH_NAME
+    terraform apply -var="project_id=${_PROJECT_ID}" -auto-approve
+  
+
+# Add more time
+timeout: '3600s'
