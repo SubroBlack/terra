@@ -19,3 +19,8 @@ npm-debug.log
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# .tfstate files
+**/*.tfstate
+**/*.tfstate.*
+**/*.terraform.lock.hcl
