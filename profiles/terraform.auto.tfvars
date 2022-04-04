@@ -1,3 +1,3 @@
 name           = "micro"
 region         = "europe-north1"
-zone           = "europe-north1-b"
+zone           = "europe-north1-a"
