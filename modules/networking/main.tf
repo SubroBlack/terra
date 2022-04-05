@@ -32,7 +32,7 @@ resource "google_compute_firewall" "gke" {
 
   allow {
     protocol = "tcp"
-    ports    = ["0-65535"]
+    ports    = ["443", "8080", "8081", "8082"]
   }
   depends_on = [
     google_compute_network.GKE_network
